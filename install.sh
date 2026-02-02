@@ -42,6 +42,15 @@ else
     echo "vibe-kanban already installed."
 fi
 
+# Install and configure fzf
+if [ ! -d "$HOME/.fzf" ]; then
+    echo "Installing fzf..."
+    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    "$HOME/.fzf/install" --all --no-bash --no-fish
+else
+    echo "fzf already installed."
+fi
+
 # Setup vibe-kanban as a background service
 echo "Setting up vibe-kanban service..."
 mkdir -p "$HOME/.local/bin"

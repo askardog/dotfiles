@@ -35,6 +35,12 @@ export VIBE_KANBAN_PORT=8042
 alias vk='$HOME/.local/bin/vibe-kanban-service.sh'
 alias vk-logs='tail -f $HOME/.local/log/vibe-kanban.log'
 
+# fzf configuration
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+export FZF_CTRL_T_OPTS="--preview 'head -100 {}'"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+
 # Editor
 export EDITOR='vim'
 
