@@ -1,6 +1,6 @@
 [user]
     name = Askar Aitzhan
-    # email = your-email@datadoghq.com  # Uncomment and set your email
+    email = askar.aitzhan@datadoghq.com
 
 [core]
     editor = vim
