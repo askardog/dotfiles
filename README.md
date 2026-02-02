@@ -44,17 +44,18 @@ vk-logs     # Tail the log file
 
 ### Accessing from Local Machine
 
-Option 1: SSH port forwarding (add to your local ~/.ssh/config):
+**Option 1: Direct via Appgate (recommended)**
+
+Open in your browser:
 ```
-Host workspace-*
-  LocalForward 8042 localhost:8042
+http://<workspace-name>.workspace.infra.dog:8042
 ```
 
-Option 2: Manual SSH tunnel:
+**Option 2: SSH port forwarding**
+
 ```bash
 ssh -L 8042:localhost:8042 workspace-<name>
 ```
-
 Then open http://localhost:8042 in your browser.
 
 ## Files

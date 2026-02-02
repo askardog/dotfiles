@@ -53,6 +53,7 @@ cat > "$HOME/.local/bin/vibe-kanban-service.sh" << 'SCRIPT'
 # vibe-kanban background service script
 
 VIBE_KANBAN_PORT=${VIBE_KANBAN_PORT:-8042}
+VIBE_KANBAN_HOST=${VIBE_KANBAN_HOST:-0.0.0.0}
 LOG_FILE="$HOME/.local/log/vibe-kanban.log"
 PID_FILE="$HOME/.local/run/vibe-kanban.pid"
 
@@ -65,8 +66,8 @@ start() {
         return 1
     fi
 
-    echo "Starting vibe-kanban on port $VIBE_KANBAN_PORT..."
-    PORT=$VIBE_KANBAN_PORT nohup vibe-kanban >> "$LOG_FILE" 2>&1 &
+    echo "Starting vibe-kanban on $VIBE_KANBAN_HOST:$VIBE_KANBAN_PORT..."
+    HOST=$VIBE_KANBAN_HOST PORT=$VIBE_KANBAN_PORT nohup vibe-kanban >> "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     echo "vibe-kanban started (PID: $!, Port: $VIBE_KANBAN_PORT)"
     echo "Log file: $LOG_FILE"
@@ -140,5 +141,6 @@ echo "  vk stop    - Stop vibe-kanban service"
 echo "  vk status  - Check service status"
 echo "  vk restart - Restart service"
 echo ""
-echo "Access vibe-kanban at: http://localhost:$VIBE_KANBAN_PORT"
-echo "(Use SSH port forwarding: ssh -L $VIBE_KANBAN_PORT:localhost:$VIBE_KANBAN_PORT workspace-<name>)"
+echo "Access vibe-kanban at:"
+echo "  - http://<workspace-name>.workspace.infra.dog:$VIBE_KANBAN_PORT (via Appgate)"
+echo "  - http://localhost:$VIBE_KANBAN_PORT (via SSH tunnel)"
