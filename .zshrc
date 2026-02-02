@@ -12,6 +12,25 @@ if command -v gt &> /dev/null; then
     eval "$(gt completion zsh 2>/dev/null || true)"
 fi
 
+# Auto-authenticate gh and gt on first shell (workspace only)
+if [ "${IN_WORKSPACE:-0}" = "1" ]; then
+    SECRETS_DIR="/run/user/$(id -u)/secrets"
+
+    # gh auth (silent, only if not authenticated)
+    if command -v gh &> /dev/null && ! gh auth status &>/dev/null 2>&1; then
+        if [ -f "$SECRETS_DIR/GH_TOKEN" ]; then
+            cat "$SECRETS_DIR/GH_TOKEN" | gh auth login --with-token 2>/dev/null
+        fi
+    fi
+
+    # gt auth (silent, only if not authenticated)
+    if command -v gt &> /dev/null && ! gt auth status &>/dev/null 2>&1; then
+        if [ -f "$SECRETS_DIR/GT_TOKEN" ]; then
+            gt auth --token "$(cat $SECRETS_DIR/GT_TOKEN)" &>/dev/null
+        fi
+    fi
+fi
+
 # Useful aliases
 alias gs='git status'
 alias gd='git diff'
