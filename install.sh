@@ -66,8 +66,14 @@ start() {
         return 1
     fi
 
-    echo "Starting vibe-kanban on $VIBE_KANBAN_HOST:$VIBE_KANBAN_PORT..."
-    HOST=$VIBE_KANBAN_HOST PORT=$VIBE_KANBAN_PORT nohup vibe-kanban >> "$LOG_FILE" 2>&1 &
+    # Start in ~/dd directory so vibe-kanban finds GitHub repos
+    WORK_DIR="${VIBE_KANBAN_WORKDIR:-$HOME/dd}"
+    if [ ! -d "$WORK_DIR" ]; then
+        WORK_DIR="$HOME"
+    fi
+
+    echo "Starting vibe-kanban on $VIBE_KANBAN_HOST:$VIBE_KANBAN_PORT (workdir: $WORK_DIR)..."
+    cd "$WORK_DIR" && HOST=$VIBE_KANBAN_HOST PORT=$VIBE_KANBAN_PORT nohup vibe-kanban >> "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     echo "vibe-kanban started (PID: $!, Port: $VIBE_KANBAN_PORT)"
     echo "Log file: $LOG_FILE"
