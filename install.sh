@@ -51,6 +51,69 @@ else
     echo "fzf already installed."
 fi
 
+# Install GitHub CLI (gh) if not present
+if ! command -v gh &> /dev/null; then
+    echo "Installing GitHub CLI..."
+    GH_VERSION="2.67.0"
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+        ARCH="amd64"
+    elif [ "$ARCH" = "aarch64" ]; then
+        ARCH="arm64"
+    fi
+    curl -sL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz" | tar xz -C /tmp
+    mkdir -p "$HOME/.local/bin"
+    mv "/tmp/gh_${GH_VERSION}_linux_${ARCH}/bin/gh" "$HOME/.local/bin/gh"
+    chmod +x "$HOME/.local/bin/gh"
+    rm -rf "/tmp/gh_${GH_VERSION}_linux_${ARCH}"
+    echo "GitHub CLI installed!"
+else
+    echo "GitHub CLI already installed."
+fi
+
+# Auto-authenticate gh and gt using secrets if available
+SECRETS_DIR="/run/user/$(id -u)/secrets"
+
+# gh authentication
+if command -v gh &> /dev/null; then
+    if ! gh auth status &>/dev/null; then
+        if [ -f "$SECRETS_DIR/GH_TOKEN" ]; then
+            echo "Authenticating GitHub CLI..."
+            GH_TOKEN=$(cat "$SECRETS_DIR/GH_TOKEN")
+            echo "$GH_TOKEN" | gh auth login --with-token
+            echo "GitHub CLI authenticated!"
+        elif [ -n "$GH_TOKEN" ]; then
+            echo "Authenticating GitHub CLI from env..."
+            echo "$GH_TOKEN" | gh auth login --with-token
+            echo "GitHub CLI authenticated!"
+        else
+            echo "NOTE: Run 'gh auth login' to authenticate GitHub CLI"
+        fi
+    else
+        echo "GitHub CLI already authenticated."
+    fi
+fi
+
+# gt (Graphite) authentication
+if command -v gt &> /dev/null; then
+    if ! gt auth status &>/dev/null 2>&1; then
+        if [ -f "$SECRETS_DIR/GT_TOKEN" ]; then
+            echo "Authenticating Graphite CLI..."
+            GT_TOKEN=$(cat "$SECRETS_DIR/GT_TOKEN")
+            gt auth --token "$GT_TOKEN"
+            echo "Graphite CLI authenticated!"
+        elif [ -n "$GT_TOKEN" ]; then
+            echo "Authenticating Graphite CLI from env..."
+            gt auth --token "$GT_TOKEN"
+            echo "Graphite CLI authenticated!"
+        else
+            echo "NOTE: Run 'gt auth' to authenticate Graphite CLI"
+        fi
+    else
+        echo "Graphite CLI already authenticated."
+    fi
+fi
+
 # Setup vibe-kanban as a background service
 echo "Setting up vibe-kanban service..."
 mkdir -p "$HOME/.local/bin"
@@ -147,8 +210,7 @@ fi
 echo "=== Dotfiles installation complete! ==="
 echo ""
 echo "Post-install steps:"
-echo "  1. Run 'gt auth' to authenticate Graphite"
-echo "  2. Restart your shell or run 'source ~/.zshrc'"
+echo "  1. Restart your shell or run 'source ~/.zshrc'"
 echo ""
 echo "vibe-kanban commands:"
 echo "  vk start   - Start vibe-kanban service"
