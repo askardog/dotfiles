@@ -30,6 +30,11 @@ alias bzlb='bzl build'
 alias bzlt='bzl test'
 alias bzlr='bzl run'
 
+# vibe-kanban
+export VIBE_KANBAN_PORT=8042
+alias vk='$HOME/.local/bin/vibe-kanban-service.sh'
+alias vk-logs='tail -f $HOME/.local/log/vibe-kanban.log'
+
 # Editor
 export EDITOR='vim'
 

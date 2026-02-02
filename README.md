@@ -5,7 +5,7 @@ Personal dotfiles for Datadog Workspaces.
 ## What's Included
 
 - **Graphite CLI** - For stacked PR workflows
-- **vibe-kanban** - Task management
+- **vibe-kanban** - Task management (auto-starts as background service)
 - **Claude Code config** - Personal CLAUDE.md preferences
 - **Shell config** - zsh with useful aliases
 - **Git config** - Sensible defaults
@@ -27,6 +27,35 @@ After workspace creation, authenticate Graphite:
 ```bash
 gt auth
 ```
+
+## vibe-kanban Service
+
+vibe-kanban auto-starts on workspace creation and listens on port **8042**.
+
+### Commands
+
+```bash
+vk start    # Start vibe-kanban
+vk stop     # Stop vibe-kanban
+vk status   # Check if running
+vk restart  # Restart service
+vk-logs     # Tail the log file
+```
+
+### Accessing from Local Machine
+
+Option 1: SSH port forwarding (add to your local ~/.ssh/config):
+```
+Host workspace-*
+  LocalForward 8042 localhost:8042
+```
+
+Option 2: Manual SSH tunnel:
+```bash
+ssh -L 8042:localhost:8042 workspace-<name>
+```
+
+Then open http://localhost:8042 in your browser.
 
 ## Files
 
